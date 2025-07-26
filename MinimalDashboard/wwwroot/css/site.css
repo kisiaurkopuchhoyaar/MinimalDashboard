@@ -1,0 +1,99 @@
+@import "https://unpkg.com/open-props";
+
+/* optional imports that use the props */
+@import "https://unpkg.com/open-props/normalize.min.css";
+@import "https://unpkg.com/open-props/buttons.min.css";
+:root {
+    interpolate-size: allow-keywords;
+}
+main {
+    min-height: 100vh;
+    &:has(details[open])
+
+{
+    min-height:200vh;
+}
+
+}
+.accordian-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+    gap: 1ch;
+    max-width:82vw;
+    
+    anchor-name: --anchor;
+    padding-block-end:2.3lh;
+    
+    
+}
+summary {
+    cursor: pointer;
+    padding: 1.32ch;
+    text-box: cap alphabetic;
+   
+    
+}
+details[name="subject"][open]::details-content {
+    /* Like 100%, but ignores padding */
+    width: stretch;
+    /* Relative to container */
+    
+    position:fixed;
+    position-anchor: --anchor;
+    position-area: inline-end;
+}
+details[name="chapters"][open]::details-content {
+    /* Like 100%, but ignores padding */
+    
+    /* Relative to container */
+    
+    position: fixed;
+    position-anchor: --anchor;
+    position-area: block-end span-all;
+   
+}
+.book-wrapper{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,20ch),1fr));
+    gap:1ch;
+    max-width:70vw;
+    
+
+    
+}
+.book {
+    display: grid;
+    grid-template-rows: subgrid;
+    gap: 1ch;
+    padding:1ch;
+    grid-row: span 4;
+    aspect-ratio: 4/3;
+    background: from 0deg at 0% 0% in oklch, oklch(14% 0.33 30) 0%, oklch(70% 0.5 261) 100%;
+    
+    border: 0.31vmin solid currentcolor;
+    p
+{
+    font-size: 0.7rem;
+    -webkit-line-clamp: 5;
+}
+           h4{
+               font-size:0.8rem;
+           }
+           span{
+               border:0.21vmin solid currentcolor;
+               max-width:fit-content;
+               border-radius:2vmin;
+               background:deeppink;
+               font-size:0.4rem;
+           }
+
+}
+details[open] summary
+ {
+    color: hsl(50 100% 50%);
+}
+details[name="chapters"][open] summary {
+    color: indianred;
+}
+

@@ -1,0 +1,84 @@
+﻿@using System.Text.Json
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model MinimalDashboard.Models.DashboardModel
+
+@{
+    ViewBag.title = "TAA Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!-- Advanced Tree Visualization for PDF Hierarchy
+    using Hybrid "Radial + Sunburst" Tree Visualization
+-->
+<main>
+<div class="accordian-wrapper">
+    @foreach (var subject in Model.Subjects)
+    {
+        <details
+            name="subject"
+         
+         data-id =@subject.SubId
+      
+        >
+            <summary>@subject.SubjectName </summary>
+                @foreach ( var ch in subject.Chapters)
+                {
+                    <details name="chapters"
+                     data-id=@ch.ChapterId
+                    >
+                    <summary>@ch.ChapterName</summary>
+                        @if (ch.HasTopics)
+                        {
+                            @foreach(var t in ch.Topics)
+                            {
+                                 <details
+                                name="topics"
+                                data-id=@t.TopicId
+                             >
+                             <summary>@t.TopicName</summary>
+                                    <div class="book-wrapper">
+                             
+                                        @foreach (var tb in t.Books)
+                                        {
+                                            
+                                                <div class="book">
+                                                    <span>@subject.SubjectName</span>
+                                                    <span>@ch.ChapterName</span>
+                                                    <h4>@tb.BookName</h4>
+                                                    <p>@tb.Description</p>
+                                                </div>
+                                            
+                                        }
+                                        </div>
+                                    
+
+                            </details>
+                            }
+                           
+                        }
+                        else{
+                            <div class="book-wrapper">
+                            
+                        @foreach(var b in ch.Books)
+                        {
+                         
+                                       <div class="book">
+                                        <span>@subject.SubjectName</span>
+                                        <span>@ch.ChapterName</span>
+                                            <h4>@b.BookName</h4>
+                                            <p>@b.Description</p>
+                                        </div>
+                         
+                        }
+                            </div>
+                            
+                        }
+                  </details>
+                }
+
+
+        </details>
+    }
+</div>
+</main>
