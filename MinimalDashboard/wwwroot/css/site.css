@@ -21,12 +21,12 @@ main {
     flex-shrink: 0;
     gap: 1ch;
     max-width:82vw;
-    
+
     anchor-name: --anchor;
     padding-block-end:2.3lh;
     
     
-}
+  }
 summary {
     cursor: pointer;
     padding: 1.32ch;
@@ -38,7 +38,7 @@ details[name="subject"][open]::details-content {
     /* Like 100%, but ignores padding */
     width: stretch;
     /* Relative to container */
-    
+
     position:fixed;
     position-anchor: --anchor;
     position-area: inline-end;
@@ -51,14 +51,17 @@ details[name="chapters"][open]::details-content {
     position: fixed;
     position-anchor: --anchor;
     position-area: block-end span-all;
-   
+
+html {
+  position: relative;
+  min-height: 100%;
 }
 .book-wrapper{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(min(100%,20ch),1fr));
     gap:1ch;
     max-width:70vw;
-    
+
 
     
 }
@@ -70,7 +73,7 @@ details[name="chapters"][open]::details-content {
     grid-row: span 4;
     aspect-ratio: 4/3;
     background: from 0deg at 0% 0% in oklch, oklch(14% 0.33 30) 0%, oklch(70% 0.5 261) 100%;
-    
+
     border: 0.31vmin solid currentcolor;
     p
 {
@@ -86,7 +89,7 @@ details[name="chapters"][open]::details-content {
                border-radius:2vmin;
                background:deeppink;
                font-size:0.4rem;
-           }
+}
 
 }
 details[open] summary
