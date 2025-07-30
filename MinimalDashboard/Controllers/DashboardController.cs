@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿// BACKUP: This file was saved after a merge conflict or before a risky operation.
+// If you need to restore, use this version.
+
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 
 using MinimalDashboard.Models;

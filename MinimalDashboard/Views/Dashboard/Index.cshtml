@@ -12,6 +12,7 @@
     using Hybrid "Radial + Sunburst" Tree Visualization
 -->
 <main>
+
 <div class="accordian-wrapper">
     @foreach (var subject in Model.Subjects)
     {
@@ -21,13 +22,13 @@
          data-id =@subject.SubId
       
         >
-            <summary>@subject.SubjectName </summary>
+                <summary><span><button command='show-modal' commandfor='editsubject' class="button subject"> ✎</button></span>@subject.SubjectName </summary>
                 @foreach ( var ch in subject.Chapters)
                 {
                     <details name="chapters"
                      data-id=@ch.ChapterId
                     >
-                    <summary>@ch.ChapterName</summary>
+                        <summary><span><button command='show-modal' commandfor='editChapter' class="button chapter"> ✎</button></span>@ch.ChapterName</summary>
                         @if (ch.HasTopics)
                         {
                             @foreach(var t in ch.Topics)
@@ -36,7 +37,7 @@
                                 name="topics"
                                 data-id=@t.TopicId
                              >
-                             <summary>@t.TopicName</summary>
+                                    <summary><span><button command='show-modal' commandfor='editTopic' class="button topic"> ✎</button></span>@t.TopicName</summary>
                                     <div class="book-wrapper">
                              
                                         @foreach (var tb in t.Books)
@@ -46,7 +47,7 @@
                                                     <span>@subject.SubjectName</span>
                                                     <span>@ch.ChapterName</span>
                                                     <h4>@tb.BookName</h4>
-                                                    <p>@tb.Description</p>
+                                                    <p>@tb.shortdescription()</p>
                                                 </div>
                                             
                                         }
@@ -67,7 +68,7 @@
                                         <span>@subject.SubjectName</span>
                                         <span>@ch.ChapterName</span>
                                             <h4>@b.BookName</h4>
-                                            <p>@b.Description</p>
+                                            <p>@b.shortdescription()</p>
                                         </div>
                          
                         }
@@ -81,4 +82,47 @@
         </details>
     }
 </div>
+
+    <dialog class="modal" id="editsubject">
+        <div class="modal-header">
+            <h2>Edit Subject</h2>
+                <button class="close-modal" command="close" commandfor='editSubject'>✖</button>
+        </div>
+        <div class="modal-body">
+            <form method="post" action="/Dashboard/EditSubject">
+                <input type="hidden" name="SubId" id="SubId" />
+                <label for="SubjectName">Subject Name:</label>
+                <input type="text" name="SubjectName" id="SubjectName" value="" required />
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </dialog>
+    <dialog class="modal" id="editChapter">
+        <div class="modal-header">
+            <h2>Edit Chapter</h2>
+                <button class="close-modal" command="close" commandfor='editChapter'>✖</button>
+        </div>
+        <div class="modal-body">
+            <form method="post" action="/Dashboard/EditChapter">
+                <input type="hidden" name="ChapterId" id="ChapterId" />
+                <label for="ChapterName">Chapter Name:</label>
+                <input type="text" name="ChapterName" id="ChapterName" required />
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </dialog>
+    <dialog class="modal" id="editTopic">
+        <div class="modal-header">
+            <h2>Edit Topic</h2>
+                <button class="close-modal" command="close" commandfor='editTopic'>✖</button>
+        </div>
+        <div class="modal-body">
+            <form method="post" action="/Dashboard/EditTopic">
+                <input type="hidden" name="TopicId" id="TopicId" />
+                <label for="TopicName">Topic Name:</label>
+                <input type="text" name="TopicName" id="TopicName" required />
+                <button type="submit">Save</button>
+            </form>
+        </div>
+		</dialog>
 </main>

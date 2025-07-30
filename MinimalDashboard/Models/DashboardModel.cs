@@ -60,5 +60,13 @@ namespace MinimalDashboard.Models
         public int? PdfOrder { get; set; }
         public bool IsPdf { get; set; }
         public string? HtmlContent { get; set; }
+        public string? shortdescription() 
+        {
+            if (string.IsNullOrEmpty(Description))
+            {
+                return string.Empty;
+            }
+            return Description.Length > 100 ? Description.Substring(0, 100) + "..." : Description;
+        }
     }
 }
