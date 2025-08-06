@@ -58,7 +58,7 @@ namespace MinimalDashboard.Controllers
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-              
+
                 // Fetch subjects
                 var subjectCommand = new SqlCommand("SELECT subId, ContentType, subjectName, bookOrder FROM Subject_BookShopping WHERE isDeleted = 0 ORDER BY bookOrder", connection);
                 using (var reader = await subjectCommand.ExecuteReaderAsync())
@@ -90,7 +90,7 @@ namespace MinimalDashboard.Controllers
                             ChapterName = reader.IsDBNull(2) ? null : reader.GetString(2),
                             ChapterOrder = reader.GetInt32(3),
                             HasTopics = reader.GetBoolean(4)
-                            
+
                         };
                         _chapters.Add(chapter);
                         // Add chapter to the corresponding subject
@@ -133,12 +133,12 @@ namespace MinimalDashboard.Controllers
                             Description = reader.IsDBNull(2) ? null : reader.GetString(2),
                             CoverUrl = reader.IsDBNull(3) ? null : reader.GetString(3),
                             PdfUrl = reader.IsDBNull(4) ? null : reader.GetString(4),
-                            TopicId =await  reader.IsDBNullAsync(5) ? null :reader.GetInt32(5),
+                            TopicId = await reader.IsDBNullAsync(5) ? null : reader.GetInt32(5),
                             ChapterId = reader.GetInt32(6),
                             SubjectId = reader.GetInt32(7),
-                            PdfOrder = await reader.IsDBNullAsync(8) ? 1: reader.GetInt32(8),
+                            PdfOrder = await reader.IsDBNullAsync(8) ? 1 : reader.GetInt32(8),
                             IsPdf = reader.GetBoolean(9),
-                            HtmlContent=await reader.IsDBNullAsync(10)? null :reader.GetString(10)
+                            HtmlContent = await reader.IsDBNullAsync(10) ? null : reader.GetString(10)
 
                         };
                         _books.Add(book);

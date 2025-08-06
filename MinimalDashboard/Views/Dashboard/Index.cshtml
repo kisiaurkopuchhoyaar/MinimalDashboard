@@ -11,6 +11,29 @@
 <!-- Advanced Tree Visualization for PDF Hierarchy
     using Hybrid "Radial + Sunburst" Tree Visualization
 -->
+<svg aria-hidden="true" class="visually-hidden">
+    <defs>
+        <filter id="wiggle">
+            <feTurbulence baseFrequency="0.01" numOctaves="1" type="fractalNoise" result="turbulence">
+                <animate attributeName="seed" dur="10s" repeatCount="indefinite" values="1; 30; 1" />
+            </feTurbulence>
+            <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="5" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+    </defs>
+</svg>
+<header>
+    <nav>
+        <ul>
+            <li><a href="/Dashboard/Index">Home</a></li>
+            <li><a href="#sunburst">List Visualizer</a></li>
+            <li><a href="/Dashboard/AddSubject">Add Subject</a></li>
+            <li><a href="/Dashboard/AddChapter">Add Chapter</a></li>
+            <li><a href="/Dashboard/AddTopic">Add Topic</a></li>
+            <li><a href="/Dashboard/AddBook">Add Book</a></li>
+			<li><a href="/Dashboard/Logout">Logout</a></li>
+        </ul>
+    </nav>
+</header>
 <main>
 
 <div class="accordian-wrapper">
@@ -22,13 +45,25 @@
          data-id =@subject.SubId
       
         >
-                <summary><span><button command='show-modal' commandfor='editsubject' class="button subject"> ✎</button></span>@subject.SubjectName </summary>
+                <summary><span><button id="edit-btn"
+                    command='show-modal'
+                    commandfor='subjectModal'
+								onclick="populateSubjectModal(@subject.SubId, '@subject.SubjectName','Subject')"
+                                class="edit-button subject">
+                            ✎
+                        </button>
+                    </span>@subject.SubjectName <sup>❄︎</sup>
+                </summary>
                 @foreach ( var ch in subject.Chapters)
                 {
                     <details name="chapters"
                      data-id=@ch.ChapterId
                     >
-                        <summary><span><button command='show-modal' commandfor='editChapter' class="button chapter"> ✎</button></span>@ch.ChapterName</summary>
+                        <summary><span><button id="edit-btn"
+                            command='show-modal'
+                            commandfor='subjectModal'
+                                        onclick="populateSubjectModal(@ch.ChapterId, '@ch.ChapterName','Chapter')"
+                            class="edit-button chapter"> ✎</button></span>@ch.ChapterName</summary>
                         @if (ch.HasTopics)
                         {
                             @foreach(var t in ch.Topics)
@@ -37,17 +72,29 @@
                                 name="topics"
                                 data-id=@t.TopicId
                              >
-                                    <summary><span><button command='show-modal' commandfor='editTopic' class="button topic"> ✎</button></span>@t.TopicName</summary>
+                                    <summary><span><button
+                                        id="edit-btn"
+                                        command='show-modal' 
+                                        commandfor='subjectModal'
+                                                    onclick="populateSubjectModal(@t.TopicId, '@t.TopicName','Topic')"
+                                        class="edit-button topic"> ✎</button></span>@t.TopicName</summary>
                                     <div class="book-wrapper">
                              
                                         @foreach (var tb in t.Books)
                                         {
-                                            
-                                                <div class="book">
+
+                                            <div class="book" id="book">
                                                     <span>@subject.SubjectName</span>
                                                     <span>@ch.ChapterName</span>
                                                     <h4>@tb.BookName</h4>
                                                     <p>@tb.shortdescription()</p>
+                                                <button id="book"
+                                                    commandfor="bookModal"
+                                                        command="show-modal"
+                                                        onclick="populateBookModal(@tb.AutoId,'@tb.BookName','@tb.Description')"
+                                                        class="book">
+                                                    
+                                                </button>
                                                 </div>
                                             
                                         }
@@ -56,19 +103,28 @@
 
                             </details>
                             }
+                            <div class="topicend"></div>
                            
                         }
                         else{
+                            
                             <div class="book-wrapper">
                             
                         @foreach(var b in ch.Books)
                         {
                          
-                                       <div class="book">
+                                       <div class="book" id="book">
                                         <span>@subject.SubjectName</span>
                                         <span>@ch.ChapterName</span>
                                             <h4>@b.BookName</h4>
                                             <p>@b.shortdescription()</p>
+                                        <button 
+                                            commandfor="bookModal"
+                                                command="show-modal"
+                                                onclick="populateBookModal(@b.AutoId,'@b.BookName','@b.Description')"
+                                                class="bookedit-btn">
+                                           
+                                        </button>
                                         </div>
                          
                         }
@@ -83,46 +139,105 @@
     }
 </div>
 
-    <dialog class="modal" id="editsubject">
-        <div class="modal-header">
-            <h2>Edit Subject</h2>
-                <button class="close-modal" command="close" commandfor='editSubject'>✖</button>
-        </div>
-        <div class="modal-body">
-            <form method="post" action="/Dashboard/EditSubject">
-                <input type="hidden" name="SubId" id="SubId" />
-                <label for="SubjectName">Subject Name:</label>
-                <input type="text" name="SubjectName" id="SubjectName" value="" required />
-                <button type="submit">Save</button>
-            </form>
-        </div>
+    <!-- Subject/Chapter/Topic Modal -->
+    <dialog id="subjectModal" >
+        <form id="subjectForm" method="post" action="/Dashboard/UpdateSubjectOrChapter">
+            <input type="hidden" name="Id" id="subjectId">
+            <label for="subjectName">Name:</label>
+            <textarea type="text" name="Name" id="subjectName"></textarea>
+            <p>Type: <span id="subjectType"></span></p>
+            <div class="actions">
+            <button type="button" commandfor="subjectModal" command="close">Close</button>
+            <button type="submit">Save</button>
+            </div>
+        </form>
     </dialog>
-    <dialog class="modal" id="editChapter">
-        <div class="modal-header">
-            <h2>Edit Chapter</h2>
-                <button class="close-modal" command="close" commandfor='editChapter'>✖</button>
-        </div>
-        <div class="modal-body">
-            <form method="post" action="/Dashboard/EditChapter">
-                <input type="hidden" name="ChapterId" id="ChapterId" />
-                <label for="ChapterName">Chapter Name:</label>
-                <input type="text" name="ChapterName" id="ChapterName" required />
-                <button type="submit">Save</button>
-            </form>
-        </div>
+
+    <!-- Book Modal -->
+    <dialog id="bookModal">
+        <form id="bookForm" method="post" action="/Dashboard/UpdateBook">
+            <input type="hidden" name="Id" id="bookId">
+            <label for="bookName">Book Name:</label>
+            <textarea type="text" name="BookName" id="bookName"></textarea>
+            <label for="bookDescription">Description:</label>
+            <textarea name="Description" id="bookDescription"></textarea>
+            <div class="actions">
+            <button type="button" commandfor="bookModal" command="close">Close</button>
+            <button type="submit">Save</button>
+            
+            </div>
+        </form>
     </dialog>
-    <dialog class="modal" id="editTopic">
-        <div class="modal-header">
-            <h2>Edit Topic</h2>
-                <button class="close-modal" command="close" commandfor='editTopic'>✖</button>
-        </div>
-        <div class="modal-body">
-            <form method="post" action="/Dashboard/EditTopic">
-                <input type="hidden" name="TopicId" id="TopicId" />
-                <label for="TopicName">Topic Name:</label>
-                <input type="text" name="TopicName" id="TopicName" required />
-                <button type="submit">Save</button>
-            </form>
-        </div>
-		</dialog>
 </main>
+@{
+    object BuildSunburst()
+    {
+        return new
+        {
+            name = "Root",
+            children = Model.Subjects.Select(s => new
+            {
+                name = s.SubjectName,
+                value = s.Chapters.Sum(c => c.Topics.Any()
+                                ? c.Topics.Sum(t => t.Books.Count)
+                                : c.Books.Count),
+                children = s.Chapters.Select(c => new
+                {
+                    name = c.ChapterName,
+                    value = c.Topics.Any()
+                            ? c.Topics.Sum(t => t.Books.Count)
+                            : c.Books.Count,
+                    children = c.Topics.Any()
+                        ? c.Topics.SelectMany(t =>
+                              t.Books.Select(b => new { name = b.BookName, value = 1 }))
+                        : c.Books.Select(b => new { name = b.BookName, value = 1 })
+                })
+            })
+        };
+    }
+}
+
+<div id="sunburst" ></div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+const data = @Html.Raw(Json.Serialize(BuildSunburst()));
+
+const width = 1900, height = 3600, radius = Math.min(width, height) / 2;
+
+const svg = d3.select("#sunburst")
+              .append("svg")
+              .attr("width", width).attr("height", height)
+              .append("g")
+              .attr("transform", `translate(${width/2},${height/2})`);
+
+const color = d3.scaleOrdinal(d3.schemeCategory10);
+const rootNode = d3.hierarchy(data).sum(d => d.value).sort((a,b)=>b.value-a.value);
+d3.partition().size([2*Math.PI, radius])(rootNode);
+
+const arc = d3.arc()
+    .startAngle(d=>d.x0).endAngle(d=>d.x1)
+    .padAngle(0.005).innerRadius(d=>d.y0).outerRadius(d=>d.y1-1);
+
+svg.selectAll("path")
+   .data(rootNode.descendants().filter(d=>d.depth))
+   .join("path")
+     .attr("d", arc)
+     .style("fill", d=>color((d.children?d:d.parent).data.name))
+     .append("title")
+     .text(d=>`${d.ancestors().map(p=>p.data.name).reverse().join("/")}\n${d.value}`);
+
+svg.selectAll("text")
+   .data(rootNode.descendants().filter(d=>d.depth && (d.x1-d.x0)>0.1))
+   .join("text")
+     .attr("transform", d=>{
+        const x=(d.x0+d.x1)/2*180/Math.PI, y=(d.y0+d.y1)/2;
+        return `rotate(${x-90}) translate(${y},0) rotate(${x<180?0:180})`;
+     })
+     .attr("dy","0.35em")
+     .attr("text-anchor","middle")
+     .style("font","11px sans-serif")
+     .text(d=>d.data.name);
+</script>
+
+
